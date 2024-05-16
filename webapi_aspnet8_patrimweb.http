@@ -1,0 +1,6 @@
+@webapi_aspnet8_patrimweb_HostAddress = http://localhost:5014
+
+GET {{webapi_aspnet8_patrimweb_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
