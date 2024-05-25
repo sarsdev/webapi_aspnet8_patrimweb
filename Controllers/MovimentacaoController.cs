@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using webapi_aspnet8_patrimweb.Data;
 using webapi_aspnet8_patrimweb.Models.DataTransferObject;
+using webapi_aspnet8_patrimweb.Models.Enumerable;
 
 namespace webapi_aspnet8_patrimweb.Controllers;
 
@@ -9,6 +10,24 @@ namespace webapi_aspnet8_patrimweb.Controllers;
 public class MovimentacaoController: ControllerBase
 {
     private readonly IPersistencia _dados = new PersistenciaMock();
+
+    [HttpGet("tipos")]
+    public ActionResult ListaTiposDeMovimentacao()
+    {
+        var lista = Enum.GetValues(typeof(TipoDeMovimentacao))
+            .Cast<TipoDeMovimentacao>()
+            .ToDictionary(nome => nome.ToString(), valor => (int)valor);
+        return Ok(lista);
+    }
+
+    [HttpGet("tiposdevalor")]
+    public ActionResult ListaTiposDeValorMovimentacao()
+    {
+        var lista = Enum.GetValues(typeof(TipoDeValorMovimentacao))
+            .Cast<TipoDeValorMovimentacao>()
+            .ToDictionary(nome => nome.ToString(), valor => (int)valor);
+        return Ok(lista);
+    }
 
     [HttpGet()]
     public ActionResult<Movimentacao> ListaMovimentacoes()
