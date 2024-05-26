@@ -4,24 +4,66 @@ public class PersistenciaMock : IPersistencia
 {
     #region Movimentação
 
-    public bool AdicionaMovimentacao(Movimentacao movimentacao)
+    public void AdicionaMovimentacao(Movimentacao movimentacao)
     {
-        throw new NotImplementedException();
+        try
+        {
+            DadosMock.Movimentacoes = DadosMock.Movimentacoes.Append(movimentacao);
+        }
+        catch (Exception erro)
+        {
+            throw new Exception($"Não foi posssível inserir a nova movimentação! Erro: {erro.Message}");
+        }
     }
 
-    public bool AdicionaMovimentacoes(IEnumerable<Movimentacao> movimentacoes)
+    public void AdicionaMovimentacoes(IEnumerable<Movimentacao> movimentacoes)
     {
-        throw new NotImplementedException();
+        try
+        {
+            foreach (var movimentacao in movimentacoes)
+            {
+                DadosMock.Movimentacoes = DadosMock.Movimentacoes.Append(movimentacao);
+            }
+        }
+        catch (Exception erro)
+        {
+            throw new Exception($"Não foi posssível inserir as novas movimentações! Erro: {erro.Message}");
+        }
     }
 
-    public bool RemoveMovimentacao(Movimentacao movimentacao)
+    public void RemoveMovimentacao(Movimentacao movimentacao)
     {
-        throw new NotImplementedException();
+        try
+        {
+            Movimentacao? movimentacaoAuxiliar = DadosMock.Movimentacoes
+                .Where(w => w.Sequencial.Equals(movimentacao.Sequencial))
+                .FirstOrDefault() ??
+                throw new Exception("Movimentação não encontrada!");
+            movimentacaoAuxiliar.Estounada = true;
+        }
+        catch (Exception erro)
+        {
+            throw new Exception($"Não foi posssível estornar a movimentação! Erro: {erro.Message}");
+        }
     }
 
-    public bool RemoveMovimentacoes(IEnumerable<Movimentacao> movimentacoes)
+    public void RemoveMovimentacoes(IEnumerable<Movimentacao> movimentacoes)
     {
-        throw new NotImplementedException();
+        try
+        {
+            foreach (var movimentacao in movimentacoes)
+            {
+                Movimentacao? movimentacaoAuxiliar = DadosMock.Movimentacoes
+                    .Where(w => w.Sequencial.Equals(movimentacao.Sequencial))
+                    .FirstOrDefault() ??
+                    throw new Exception("Movimentação não encontrada!");
+                movimentacaoAuxiliar.Estounada = true;                
+            }
+        }
+        catch (Exception erro)
+        {
+            throw new Exception($"Não foi posssível estornas as movimentações! Erro: {erro.Message}");
+        }
     }    
     
     public long RetornaNovoSequencialMovimentacao()
@@ -110,9 +152,16 @@ public class PersistenciaMock : IPersistencia
             );
     }
 
-    public Produto? RetornaProduto(long sequencial)
+    public Produto RetornaProduto(long sequencial)
     {
-        return DadosMock.Produtos.Where(w => w.Sequencial.Equals(sequencial)).FirstOrDefault();
+        try
+        {
+            return DadosMock.Produtos.Where(w => w.Sequencial.Equals(sequencial)).First();            
+        }
+        catch (Exception)
+        {
+            throw new Exception("O produto não foi encontrado!");
+        }
     }
 
     #endregion Produto

@@ -10,27 +10,30 @@ public static class DadosMock
                 Sequencial = 123,
                 DataDaMovimentacao = DateOnly.FromDateTime(DateTime.Now),
                 Tipo = TipoDeMovimentacao.AQUISICAO,
-                SequencialDoProduto = 1,
+                SequencialDoProduto = 110,
                 ValorMovimentado = 100.0f,
-                ValorDoImpostoMovimentado = 33.90f
+                ValorDoImpostoMovimentado = 33.90f,
+                Estounada = false
             },
             new()
             {
                 Sequencial = 134,
                 DataDaMovimentacao = DateOnly.FromDateTime(DateTime.Now),
                 Tipo = TipoDeMovimentacao.BAIXA,
-                SequencialDoProduto = 2,
+                SequencialDoProduto = 112,
                 ValorMovimentado = 250.0f,
-                ValorDoImpostoMovimentado = 0.0f
+                ValorDoImpostoMovimentado = 0.0f,
+                Estounada = false
             },
             new()
             {
                 Sequencial = 145,
                 DataDaMovimentacao = DateOnly.FromDateTime(DateTime.Now),
                 Tipo = TipoDeMovimentacao.TRANSFERENCIA,
-                SequencialDoProduto = 3,
+                SequencialDoProduto = 114,
                 ValorMovimentado = 50.0f,
-                ValorDoImpostoMovimentado = 0.99f
+                ValorDoImpostoMovimentado = 0.99f,
+                Estounada = false
             }
         ];
     
@@ -58,7 +61,8 @@ public static class DadosMock
             SequencialDaEmpresa = 1,
             Quantidade = 100,
             ValorDeCompra = 1000.0f,
-            ValorDoImposto = 120.0f
+            ValorDoImposto = 120.0f,
+            Descricao = "Produto ABC"
         },
         new()
         {
@@ -68,7 +72,8 @@ public static class DadosMock
             SequencialDaEmpresa = 1,
             Quantidade = 10,
             ValorDeCompra = 100.0f,
-            ValorDoImposto = 12.0f
+            ValorDoImposto = 12.0f,
+            Descricao = "Produto ABC"
         },
         new()
         {
@@ -78,7 +83,8 @@ public static class DadosMock
             SequencialDaEmpresa = 1,
             Quantidade = 25,
             ValorDeCompra = 255.0f,
-            ValorDoImposto = 75.90f
+            ValorDoImposto = 75.90f,
+            Descricao = "Produto FGH"
         },
         new()
         {
@@ -88,7 +94,8 @@ public static class DadosMock
             SequencialDaEmpresa = 2,
             Quantidade = 5,
             ValorDeCompra = 59.90f,
-            ValorDoImposto = 0.0f
+            ValorDoImposto = 0.0f,
+            Descricao = "Produto JKL"
         },
         new()
         {
@@ -98,7 +105,8 @@ public static class DadosMock
             SequencialDaEmpresa = 1,
             Quantidade = 50,
             ValorDeCompra = 890.65f,
-            ValorDoImposto = 132.44f
+            ValorDoImposto = 132.44f,
+            Descricao = "Produto OPQ"
         }
     ];
 }

@@ -9,11 +9,11 @@ public interface IPersistencia
     public IEnumerable<Movimentacao> RetornaMovimentacoes(DateOnly data);
     public IEnumerable<Movimentacao> RetornaMovimentacoes(DateOnly dataInicialDoPeriodo, DateOnly dataFinalDoPeriodo);
     public IEnumerable<Movimentacao> RetornaMovimentacoes(long sequencialDoProduto, DateOnly dataInicialDoPeriodo, DateOnly dataFinalDoPeriodo);
-    public bool AdicionaMovimentacao(Movimentacao movimentacao);
-    public bool AdicionaMovimentacoes(IEnumerable<Movimentacao> movimentacoes);
-    public bool RemoveMovimentacao(Movimentacao movimentacao);
-    public bool RemoveMovimentacoes(IEnumerable<Movimentacao> movimentacoes);
-    public Produto? RetornaProduto(long sequencial);
+    public void AdicionaMovimentacao(Movimentacao movimentacao);
+    public void AdicionaMovimentacoes(IEnumerable<Movimentacao> movimentacoes);
+    public void RemoveMovimentacao(Movimentacao movimentacao);
+    public void RemoveMovimentacoes(IEnumerable<Movimentacao> movimentacoes);
+    public Produto RetornaProduto(long sequencial);
     public IEnumerable<Produto> RetornaProdutos();
     public IEnumerable<Produto> RetornaProdutos(int numero, long sequencialDaEmpresa);
     public IEnumerable<Produto> RetornaProdutos(int numero, int nroComponente, long sequencialDaEmpresa);
