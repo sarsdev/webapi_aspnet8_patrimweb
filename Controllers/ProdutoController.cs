@@ -8,8 +8,8 @@ namespace webapi_aspnet8_patrimweb.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[ProducesResponseType(typeof(RespostaHttpFalha), StatusCodes.Status404NotFound)]
-[ProducesResponseType(typeof(RespostaHttpFalha), StatusCodes.Status500InternalServerError)]
+[ProducesResponseType(typeof(RespostaHttpFalhaDTO), StatusCodes.Status404NotFound)]
+[ProducesResponseType(typeof(RespostaHttpFalhaDTO), StatusCodes.Status500InternalServerError)]
 public class ProdutoController: ControllerBase
 {
     private readonly IPersistencia _dados = new PersistenciaMock();
@@ -21,11 +21,11 @@ public class ProdutoController: ControllerBase
         try
         {
             var lista = _dados.RetornaProdutos();
-            return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalha(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontrados produtos!"));
+            return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontrados produtos!"));
         }
         catch (Exception erro)
         {
-            return new ObjectResult(new RespostaHttpFalha(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
+            return new ObjectResult(new RespostaHttpFalhaDTO(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
         }
     }
 
@@ -36,11 +36,11 @@ public class ProdutoController: ControllerBase
         try
         {
             var lista = _dados.RetornaProdutos(numero, sequencialEmpresa);
-            return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalha(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontrados produtos!"));
+            return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontrados produtos!"));
         }
         catch (Exception erro)
         {
-            return new ObjectResult(new RespostaHttpFalha(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
+            return new ObjectResult(new RespostaHttpFalhaDTO(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
         }
     }
 
@@ -51,11 +51,11 @@ public class ProdutoController: ControllerBase
         try
         {
             var lista = _dados.RetornaProdutos(numero, nrocomponente, sequencialEmpresa);
-            return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalha(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontrados produtos!"));
+            return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontrados produtos!"));
         }
         catch (Exception erro)
         {
-            return new ObjectResult(new RespostaHttpFalha(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
+            return new ObjectResult(new RespostaHttpFalhaDTO(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
         }
     }
 
@@ -66,11 +66,11 @@ public class ProdutoController: ControllerBase
         try
         {
             var produto = _dados.RetornaProduto(sequencial);
-            return produto != null ? Ok(produto) : NotFound(new RespostaHttpFalha(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foi encontrado o produto!"));
+            return produto != null ? Ok(produto) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foi encontrado o produto!"));
         }
         catch (Exception erro)
         {
-            return new ObjectResult(new RespostaHttpFalha(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
+            return new ObjectResult(new RespostaHttpFalhaDTO(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
         }
     }
 

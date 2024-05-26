@@ -8,8 +8,8 @@ namespace webapi_aspnet8_patrimweb.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[ProducesResponseType(typeof(RespostaHttpFalha), StatusCodes.Status404NotFound)]
-[ProducesResponseType(typeof(RespostaHttpFalha), StatusCodes.Status500InternalServerError)]
+[ProducesResponseType(typeof(RespostaHttpFalhaDTO), StatusCodes.Status404NotFound)]
+[ProducesResponseType(typeof(RespostaHttpFalhaDTO), StatusCodes.Status500InternalServerError)]
 public class EmpresaController: ControllerBase
 {
     private readonly IPersistencia _dados = new PersistenciaMock();
@@ -21,11 +21,11 @@ public class EmpresaController: ControllerBase
         try
         {
             var lista = _dados.RetornaEmpresas();
-            return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalha(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontradas empresas!"));
+            return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontradas empresas!"));
         }
         catch (Exception erro)
         {
-            return new ObjectResult(new RespostaHttpFalha(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
+            return new ObjectResult(new RespostaHttpFalhaDTO(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
         }
     }
 
@@ -36,11 +36,11 @@ public class EmpresaController: ControllerBase
         try
         {
             var empresa = _dados.RetornaEmpresa(sequencial);
-            return empresa != null ? Ok(empresa) : NotFound(new RespostaHttpFalha(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foi encontrada a empresa!"));
+            return empresa != null ? Ok(empresa) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foi encontrada a empresa!"));
         }
         catch (Exception erro)
         {
-            return new ObjectResult(new RespostaHttpFalha(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
+            return new ObjectResult(new RespostaHttpFalhaDTO(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
         }
     }
 

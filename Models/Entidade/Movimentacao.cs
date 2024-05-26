@@ -1,3 +1,4 @@
+using webapi_aspnet8_patrimweb.Models.DataTransferObject;
 using webapi_aspnet8_patrimweb.Models.Enumerable;
 namespace webapi_aspnet8_patrimweb.Models.Entidade;
 public class Movimentacao
@@ -8,18 +9,26 @@ public class Movimentacao
     public long SequencialDoProduto { get; set; }
     public float ValorMovimentado { get; set; }
     public float ValorDoImpostoMovimentado { get; set; }
+    public bool Estounada { get; set; }
+    public bool IndicadorTotal { get; set; }
+    public TipoDeValorMovimentacao TipoDeValor { get; set; }
+    public float ValorOperacao { get; set; }
 
     public Movimentacao() { }
-    public Movimentacao(DataTransferObject.Movimentacao dtoMovimentacao)
+    public Movimentacao(MovimentacaoDTO dtoMovimentacao)
     {
-        Sequencial = 0;
+        Sequencial = dtoMovimentacao.Sequencial;
         DataDaMovimentacao = dtoMovimentacao.Data;
         Tipo = dtoMovimentacao.Tipo;
         SequencialDoProduto = dtoMovimentacao.Produto.Sequencial;
         ValorMovimentado = RetornaValorMovimentado(dtoMovimentacao);
         ValorDoImpostoMovimentado = RetornaValorDoImpostoMovimentado(dtoMovimentacao);
+        Estounada = false;
+        IndicadorTotal = dtoMovimentacao.IndicadorTotal;
+        TipoDeValor = dtoMovimentacao.TipoDeValor;
+        ValorOperacao = dtoMovimentacao.Valor;
     }
-    private static float RetornaValorMovimentado(DataTransferObject.Movimentacao dtoMovimentacao)
+    private static float RetornaValorMovimentado(MovimentacaoDTO dtoMovimentacao)
     {
         if(dtoMovimentacao.IndicadorTotal) return dtoMovimentacao.Produto.ValorDeCompra;
         return dtoMovimentacao.TipoDeValor 
@@ -31,7 +40,7 @@ public class Movimentacao
             _ => 0.0f,
         };
     }
-    private static float RetornaValorDoImpostoMovimentado(DataTransferObject.Movimentacao dtoMovimentacao)
+    private static float RetornaValorDoImpostoMovimentado(MovimentacaoDTO dtoMovimentacao)
     {
         if(dtoMovimentacao.IndicadorTotal) return dtoMovimentacao.Produto.ValorDoImposto;
         return dtoMovimentacao.TipoDeValor 
