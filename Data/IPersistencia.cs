@@ -13,7 +13,7 @@ public interface IPersistencia
     public void AdicionaMovimentacoes(IEnumerable<Movimentacao> movimentacoes);
     public void RemoveMovimentacao(Movimentacao movimentacao);
     public void RemoveMovimentacoes(IEnumerable<Movimentacao> movimentacoes);
-    public Produto RetornaProduto(long sequencial);
+    public Produto? RetornaProduto(long sequencial);
     public IEnumerable<Produto> RetornaProdutos();
     public IEnumerable<Produto> RetornaProdutos(int numero, long sequencialDaEmpresa);
     public IEnumerable<Produto> RetornaProdutos(int numero, int nroComponente, long sequencialDaEmpresa);

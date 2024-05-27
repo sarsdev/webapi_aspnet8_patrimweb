@@ -152,16 +152,9 @@ public class PersistenciaMock : IPersistencia
             );
     }
 
-    public Produto RetornaProduto(long sequencial)
+    public Produto? RetornaProduto(long sequencial)
     {
-        try
-        {
-            return DadosMock.Produtos.Where(w => w.Sequencial.Equals(sequencial)).First();            
-        }
-        catch (Exception)
-        {
-            throw new Exception("O produto não foi encontrado!");
-        }
+        return DadosMock.Produtos.Where(w => w.Sequencial.Equals(sequencial)).FirstOrDefault();
     }
 
     #endregion Produto
