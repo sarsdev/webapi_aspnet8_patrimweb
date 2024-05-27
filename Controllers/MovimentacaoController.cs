@@ -14,6 +14,27 @@ public class MovimentacaoController: ControllerBase
 {
     private readonly IPersistencia _dados = new PersistenciaMock();
 
+    [HttpGet("inicial")]
+    [ProducesResponseType(typeof(HateoasDTO), StatusCodes.Status200OK)]
+    public IActionResult ListaAcoesPossiveis() => Ok(new HateoasDTO()
+        {
+            Links = [
+                new HateoasDetalhesDTO("GET", "Self", "api/movimentacao/inicial"),
+                new HateoasDetalhesDTO("GET", "Listar Tipos de Movimentação", "api/movimentacao/tipos"),
+                new HateoasDetalhesDTO("GET", "Retorna Descrição de Tipo", "api/movimentacao/tipos/{valor:int}"),
+                new HateoasDetalhesDTO("GET", "Listar Tipos de Valores de Movimentação", "api/movimentacao/tiposdevalor"),
+                new HateoasDetalhesDTO("GET", "Retornar Descrição de Tipo de Valor", "api/movimentacao/tiposdevalor/{valor:int}"),
+                new HateoasDetalhesDTO("GET", "Listar Movimentações", "api/movimentacao"),
+                new HateoasDetalhesDTO("GET", "Retornar Movimentação", "api/movimentacao/{sequencial:long}"),
+                new HateoasDetalhesDTO("GET", "Listar Movimentações do Período", "api/movimentacao/{dataInicial:datetime}/{dataFinal:datetime}"),
+                new HateoasDetalhesDTO("GET", "Listar Movimentações do Período e Produto", "api/movimentacao/{sequencialProduto:long}/{dataInicial:datetime}/{dataFinal:datetime}"),
+                new HateoasDetalhesDTO("POST", "Adicionar Movimentação", "api/movimentacao"),
+                new HateoasDetalhesDTO("POST", "Adicionar Várias Movimentações", "api/movimentacao/varios"),
+                new HateoasDetalhesDTO("DELETE", "Estornar Movimentação", "api/movimentacao/{sequencial:long}"),
+                new HateoasDetalhesDTO("DELETE", "Estornar Várias Movimentações", "api/movimentacao/varios")
+            ]
+        });
+
     [HttpGet("tipos")]
     [ProducesResponseType(typeof(Dictionary<string, int>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(RespostaHttpFalhaDTO), StatusCodes.Status404NotFound)]
@@ -25,6 +46,22 @@ public class MovimentacaoController: ControllerBase
             .Cast<TipoDeMovimentacao>()
             .ToDictionary(nome => nome.ToString(), valor => (int)valor);
             return lista.Count != 0 ? Ok(lista) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontrados Tipos de Movimentação!"));
+        }
+        catch (Exception erro)
+        {
+            return new ObjectResult(new RespostaHttpFalhaDTO(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
+        }
+    }
+
+    [HttpGet("tipos/{valor:int}")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RespostaHttpFalhaDTO), StatusCodes.Status404NotFound)]
+    public IActionResult ListaTiposDeMovimentacao(int valor)
+    {
+        try
+        {
+            var tipo = Enum.GetName((TipoDeMovimentacao)valor);
+            return !string.IsNullOrEmpty(tipo) ? Ok(tipo) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foi encontrado o Tipo de Movimentação!"));
         }
         catch (Exception erro)
         {
@@ -50,6 +87,22 @@ public class MovimentacaoController: ControllerBase
         }
     }
 
+    [HttpGet("tiposdevalor/{valor:int}")]
+    [ProducesResponseType(typeof(Dictionary<string, int>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RespostaHttpFalhaDTO), StatusCodes.Status404NotFound)]
+    public IActionResult ListaTiposDeValorMovimentacao(int valor)
+    {
+        try
+        {
+            var tipo = Enum.GetName((TipoDeValorMovimentacao)valor);
+            return !string.IsNullOrEmpty(tipo) ? Ok(tipo) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foi encontrado o Tipo de Valor para Movimentação!"));
+        }
+        catch (Exception erro)
+        {
+            return new ObjectResult(new RespostaHttpFalhaDTO(StatusCodes.Status500InternalServerError, "Erro inesperado", erro.Message));
+        }
+    }
+
     [HttpGet()]
     [ProducesResponseType(typeof(IEnumerable<MovimentacaoDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(RespostaHttpFalhaDTO), StatusCodes.Status404NotFound)]
@@ -59,14 +112,10 @@ public class MovimentacaoController: ControllerBase
         {
             var lista = _dados.RetornaMovimentacoes()
                 .Where(w => w.Estounada.Equals(false))
-                .Select(s => new MovimentacaoDTO(){
-                    Sequencial = s.Sequencial,
-                    Data = s.DataDaMovimentacao,
-                    IndicadorTotal = s.IndicadorTotal,
-                    Produto = _dados.RetornaProduto(s.SequencialDoProduto),
-                    Tipo = s.Tipo,
-                    TipoDeValor = s.TipoDeValor,
-                    Valor = s.ValorOperacao
+                .Select(s => {
+                    var produto = _dados.RetornaProduto(s.SequencialDoProduto)!;
+                    var empresa = _dados.RetornaEmpresa(produto.SequencialDaEmpresa)!;
+                    return new MovimentacaoDTO(s, new ProdutoDTO(produto, new EmpresaDTO(empresa.Sequencial, empresa.NomeFantasia)));
                 });
             return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontradas movimentações!"));
         }
@@ -85,14 +134,10 @@ public class MovimentacaoController: ControllerBase
         {
             var lista = _dados.RetornaMovimentacoes(dataInicial, dataFinal)
                 .Where(w => w.Estounada.Equals(false))
-                .Select(s => new MovimentacaoDTO(){
-                    Sequencial = s.Sequencial,
-                    Data = s.DataDaMovimentacao,
-                    IndicadorTotal = s.IndicadorTotal,
-                    Produto = _dados.RetornaProduto(s.SequencialDoProduto),
-                    Tipo = s.Tipo,
-                    TipoDeValor = s.TipoDeValor,
-                    Valor = s.ValorOperacao
+                .Select(s =>{
+                    var produto = _dados.RetornaProduto(s.SequencialDoProduto)!;
+                    var empresa = _dados.RetornaEmpresa(produto.SequencialDaEmpresa)!;
+                    return new MovimentacaoDTO(s, new ProdutoDTO(produto, new EmpresaDTO(empresa.Sequencial, empresa.NomeFantasia)));
                 });
             return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontradas movimentações!"));
         }
@@ -111,14 +156,10 @@ public class MovimentacaoController: ControllerBase
         {
             var lista = _dados.RetornaMovimentacoes(sequencialProduto, dataInicial, dataFinal)
                 .Where(w => w.Estounada.Equals(false))
-                .Select(s => new MovimentacaoDTO(){
-                    Sequencial = s.Sequencial,
-                    Data = s.DataDaMovimentacao,
-                    IndicadorTotal = s.IndicadorTotal,
-                    Produto = _dados.RetornaProduto(s.SequencialDoProduto),
-                    Tipo = s.Tipo,
-                    TipoDeValor = s.TipoDeValor,
-                    Valor = s.ValorOperacao
+                .Select(s =>{
+                    var produto = _dados.RetornaProduto(s.SequencialDoProduto)!;
+                    var empresa = _dados.RetornaEmpresa(produto.SequencialDaEmpresa)!;
+                    return new MovimentacaoDTO(s, new ProdutoDTO(produto, new EmpresaDTO(empresa.Sequencial, empresa.NomeFantasia)));
                 });
             return lista.Any() ? Ok(lista) : NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foram encontradas movimentações!"));
         }
@@ -137,15 +178,9 @@ public class MovimentacaoController: ControllerBase
         {
             var movimentacao = _dados.RetornaMovimentacao(sequencial);
             if(movimentacao == null || movimentacao.Estounada) return NotFound(new RespostaHttpFalhaDTO(StatusCodes.Status404NotFound, "Informação não encontrada", "Não foi encontrada a movimentação!"));
-            return Ok(new MovimentacaoDTO(){
-                Sequencial = movimentacao.Sequencial,
-                Data = movimentacao.DataDaMovimentacao,
-                IndicadorTotal = movimentacao.IndicadorTotal,
-                Produto = _dados.RetornaProduto(movimentacao.SequencialDoProduto),
-                Tipo = movimentacao.Tipo,
-                TipoDeValor = movimentacao.TipoDeValor,
-                Valor = movimentacao.ValorOperacao
-            });
+            var produto = _dados.RetornaProduto(movimentacao.SequencialDoProduto)!;
+            var empresa = _dados.RetornaEmpresa(produto.SequencialDaEmpresa)!;
+            return Ok(new MovimentacaoDTO(movimentacao, new ProdutoDTO(produto, new EmpresaDTO(empresa.Sequencial, empresa.NomeFantasia))));
         }
         catch (Exception erro)
         {

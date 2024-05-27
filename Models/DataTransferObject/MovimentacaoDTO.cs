@@ -8,20 +8,45 @@ public class MovimentacaoDTO
     public long Sequencial { get; set; }
 
     [JsonPropertyName("data")]
-    public required DateOnly Data { get; set; }
+    public DateOnly Data { get; set; }
 
     [JsonPropertyName("tipo")]
-    public required TipoDeMovimentacao Tipo { get; set; }
+    public TipoDeMovimentacao Tipo { get; set; }
 
     [JsonPropertyName("produto")]
-    public required Produto Produto { get; set; }
+    public ProdutoDTO Produto { get; set; }
 
     [JsonPropertyName("total")]
-    public required bool IndicadorTotal { get; set; }
+    public bool IndicadorTotal { get; set; }
 
     [JsonPropertyName("tipovalor")]
-    public required TipoDeValorMovimentacao TipoDeValor { get; set; }
+    public TipoDeValorMovimentacao TipoDeValor { get; set; }
 
     [JsonPropertyName("valor")]
-    public required float Valor { get; set; }
+    public float Valor { get; set; }
+
+    [JsonPropertyName("links")]
+    public IEnumerable<HateoasDetalhesDTO>? Links { get; set; }
+
+    [JsonConstructor]
+    #pragma warning disable CS8618
+    public MovimentacaoDTO() {}
+    #pragma warning restore CS8618
+
+    public MovimentacaoDTO(Movimentacao movimentacao, ProdutoDTO produto)
+    {
+        Sequencial = movimentacao.Sequencial;
+        Data = movimentacao.DataDaMovimentacao;
+        IndicadorTotal = movimentacao.IndicadorTotal;
+        Produto = produto;
+        Tipo = movimentacao.Tipo;
+        TipoDeValor = movimentacao.TipoDeValor;
+        Valor = movimentacao.ValorOperacao;
+        Links = [
+            new HateoasDetalhesDTO("GET", "Self", $"api/movimentacao/{Sequencial}"),
+            new HateoasDetalhesDTO("GET", "Obter Descrição do Tipo", $"api/movimentacao/tipos/{(int)Tipo}"),
+            new HateoasDetalhesDTO("GET", "Obter Descrição do Tipo de Valor", $"api/movimentacao/tiposdevalor/{(int)TipoDeValor}"),
+            new HateoasDetalhesDTO("DELETE", "Self", $"api/movimentacao/{Sequencial}")
+        ];
+    }
 }
