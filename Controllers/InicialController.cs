@@ -14,13 +14,11 @@ public class InicialController: ControllerBase
         {
             Links = [
                 new HateoasDetalhesDTO("GET", "Listar Empresas", "api/empresa"),
+                new HateoasDetalhesDTO("GET", "Listar Ações Possíveis em Empresa", "api/empresa/inicial"),
                 new HateoasDetalhesDTO("GET", "Listar Produtos", "api/produto"),
-                new HateoasDetalhesDTO("GET", "Listar Tipos de Movimentação", "api/movimentacao/tipos"),
-                new HateoasDetalhesDTO("GET", "Listar Tipos de Valor de Movimentação", "api/movimentacao/tiposdevalor"),
+                new HateoasDetalhesDTO("GET", "Listar Ações Possíveis em Produtos", "api/produto/inicial"),
                 new HateoasDetalhesDTO("GET", "Listar Movimentações", "api/movimentacao"),
-                new HateoasDetalhesDTO("POST", "Adicionar Movimentação", "api/movimentacao"),
-                new HateoasDetalhesDTO("POST", "Adicionar Várias Movimentações", "api/movimentacao/varios"),
-                new HateoasDetalhesDTO("DELETE", "Estornar Várias Movimentações", "api/movimentacao/varios")
+                new HateoasDetalhesDTO("GET", "Listar Ações Possíveis em Movimentações", "api/movimentacao/inicial")
             ]
         });
 }
